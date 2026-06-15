@@ -1,5 +1,7 @@
-# API key / secrets (NEVER commit)
 .env
+
+# Notas pessoais de instalação (específicas desta máquina)
+INSTRUCOES_INSTALACAO.md
 
 # Maven build output
 target/
