@@ -58,6 +58,9 @@ public class McpServerApp {
         return new McpServerFeatures.SyncToolSpecification(tool, (exchange, request) -> {
             try {
                 Map<String, Utils.ADR> adrs = Utils.loadADRs();
+                if (adrs.isEmpty()) {
+                    return textResult(noAdrsLoadedMessage(), false);
+                }
                 String report = aiService.analyzeRisks(adrs);
                 return textResult(report, false);
             } catch (Exception e) {
@@ -103,6 +106,9 @@ public class McpServerApp {
         }
 
         Map<String, Utils.ADR> adrs = Utils.loadADRs();
+        if (adrs.isEmpty()) {
+            return noAdrsLoadedMessage();
+        }
         String target = keyword.toLowerCase(Locale.ROOT);
 
         ArrayNode results = MAPPER.createArrayNode();
@@ -142,6 +148,13 @@ public class McpServerApp {
 
     private static boolean contains(String text, String lowerTarget) {
         return text != null && text.toLowerCase(Locale.ROOT).contains(lowerTarget);
+    }
+
+    private String noAdrsLoadedMessage() throws Exception {
+        ObjectNode message = MAPPER.createObjectNode();
+        message.put("message",
+                "Nenhuma ADR carregada. Verifique o arquivo arquitetura/maria_brasileira_arquitetura.md.");
+        return MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(message);
     }
 
     private static McpSchema.CallToolResult textResult(String text, boolean isError) {

@@ -80,9 +80,14 @@ public final class Utils {
         try {
             content = Files.readString(path, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("Could not read the architecture document at: " + path, e);
+            System.err.println("[Utils] Erro ao carregar ADRs: " + e.getMessage());
+            return new LinkedHashMap<>();
         }
-        return parseADRs(content);
+        Map<String, ADR> adrs = parseADRs(content);
+        if (adrs.isEmpty()) {
+            System.err.println("[Utils] Nenhuma ADR encontrada no arquivo. Verifique o formato do documento.");
+        }
+        return adrs;
     }
 
     private static Path locateDocument() {
